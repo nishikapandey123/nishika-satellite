@@ -227,7 +227,7 @@
 
 
 # # Flask Route for Home
-# @app.route("/", methods=["GET", "POST"])
+# @app.route("/index.html", methods=["GET", "POST"])
 # def index():
 #     ndvi_available = False
 #     lat, lon, start_date, end_date = None, None, None, None
