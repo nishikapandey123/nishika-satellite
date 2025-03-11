@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NDVI Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+            color: #252525;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            padding: 16px;
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: auto 1fr 1fr;
+            gap: 16px;
+            height: calc(100vh - 32px);
+            width: 100%;
+        }
+
+        .top-input-section {
+            grid-column: span 12;
+            background: linear-gradient(90deg, #2B5876, #4E4376);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .top-input-section form {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: nowrap;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 0 10px;
+        }
+
+        .top-input-section label {
+            font-size: 14px;
+            color: white;
+            margin-right: 5px;
+            white-space: nowrap;
+        }
+
+        .top-input-section input {
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            outline: none;
+            font-size: 14px;
+            background: transparent;
+            color: white;
+            width: 150px;
+        }
+
+        .top-input-section button {
+            background: #ff9800;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            white-space: nowrap;
+        }
+
+        .top-input-section button:hover {
+            background: #e68900;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 12px 16px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            background: #b0a3bd;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-header .icon {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .card-content {
+            flex: 1;
+            overflow: hidden;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+       
+        .map-section {
+            grid-column: span 6;
+            grid-row: span 2;
+        }
+        
+        .ndvi-section {
+            grid-column: span 3;
+            grid-row: span 1;
+        }
+        
+        .pest-chart-section {
+            grid-column: span 3;
+            grid-row: span 1;
+        }
+        
+        .country-chart-section {
+            grid-column: span 3;
+            grid-row: span 1;
+        }
+        
+        .product-chart-section {
+            grid-column: span 3;
+            grid-row: span 1;
+        }
+        
+        
+        .card-content img,
+        .card-content svg {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+        
+        
+        .map-content {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+        
+        
+        .custom-scrollbar {
+            overflow: auto;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Top Input Section -->
+        <div class="top-input-section">
+            <form method="POST" id="ndvi-form">
+                <div class="input-group">
+                    <label for="start-date">Start Date:</label>
+                    <input type="date" id="start-date" name="start_date">
+                </div>
+                <div class="input-group">
+                    <label for="end-date">End Date:</label>
+                    <input type="date" id="end-date" name="end_date">
+                </div>
+                <div class="input-group">
+                    <label for="latitude">Latitude:</label>
+                    <input type="text" id="latitude" name="latitude" placeholder="Latitude will auto-fill" readonly>
+                </div>
+                <div class="input-group">
+                    <label for="longitude">Longitude:</label>
+                    <input type="text" id="longitude" name="longitude" placeholder="Longitude will auto-fill" readonly>
+                </div>
+                <button type="submit">🌿 CLEAR </button>
+            </form>
+        </div>
+        
+        
+        <!-- Map Section - Left side, spanning 2 rows -->
+        <div class="dashboard-card map-section">
+            <div class="card-header">
+                <span class="icon">🌍</span> Interactive Map
+            </div>
+            <div class="card-content">
+                {{ map_html|safe }}
+            </div>
+        </div>
+        
+        <!-- NDVI Image Section - Top-Right -->
+        <div class="dashboard-card ndvi-section">
+            <div class="card-header">
+                <span class="icon">📊</span> NDVI Analysis
+            </div>
+            <div class="card-content">
+                {% if ndvi_available %}
+                <img src="{{ url_for('get_ndvi_image', lat=lat, lon=lon) }}" alt="NDVI Image">
+                {% else %}
+                <div class="placeholder-message">Select a point on the map to calculate NDVI</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Pest Chart Section - Top-Right, next to NDVI -->
+        <div class="dashboard-card pest-chart-section">
+            <div class="card-header">
+                <span class="icon">🐛</span> Pest Detection Analysis
+            </div>
+            <div class="card-content">
+                <div id="pest-chart"></div>
+            </div>
+        </div>
+        
+        <!-- Country Chart Section - Bottom-Right -->
+        <div class="dashboard-card country-chart-section">
+            <div class="card-header">
+                <span class="icon">📊</span> Data Points Per Country
+            </div>
+            <div class="card-content">
+                <div id="bar-chart"></div>
+            </div>
+        </div>
+        
+        <!-- Product Chart Section - Bottom-Right, next to Country Chart -->
+        <div class="dashboard-card product-chart-section">
+            <div class="card-header">
+                <span class="icon">🍌</span> Data Points Per Product Type
+            </div>
+            <div class="card-content custom-scrollbar">
+                <div id="product-chart"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load D3.js -->
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script>
+        // Function to resize charts to fit container
+        function resizeCharts() {
+            // You would call this function when the page loads and on window resize
+            renderCountryChart();
+            renderProductChart();
+            renderPestChart();
+        }
+        
+        // Country Chart
+        function renderCountryChart() {
+            // Clear previous chart if any
+            d3.select("#bar-chart").html("");
+            
+            // Data received from Python
+            var countryData = {{ country_data_json|safe }};
+            
+            // Get dimensions of the container
+            var container = document.querySelector(".country-chart-section .card-content");
+            var containerWidth = container.clientWidth;
+            var containerHeight = container.clientHeight;
+            
+            // Set dimensions
+            var margin = { top: 20, right: 30, bottom: 40, left: 50 },
+                width = containerWidth - margin.left - margin.right,
+                height = containerHeight - margin.top - margin.bottom;
+                
+            // Create SVG container
+            var svg = d3.select("#bar-chart")
+                .append("svg")
+                .attr("width", containerWidth)
+                .attr("height", containerHeight)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                
+            // X scale
+            var x = d3.scaleBand()
+                .domain(countryData.map(d => d.country))
+                .range([0, width])
+                .padding(0.3);
+                
+            // Y scale
+            var y = d3.scaleLinear()
+                .domain([0, d3.max(countryData, d => d.count)])
+                .nice()
+                .range([height, 0]);
+                
+            // Add bars
+            svg.selectAll(".bar")
+                .data(countryData)
+                .enter()
+                .append("rect")
+                .attr("class", "bar")
+                .attr("x", d => x(d.country))
+                .attr("y", d => y(d.count))
+                .attr("width", x.bandwidth())
+                .attr("height", d => height - y(d.count))
+                .attr("fill", "#ff9800")
+                .on("mouseover", function () { d3.select(this).attr("fill", "#e68900"); })
+                .on("mouseout", function () { d3.select(this).attr("fill", "#ff9800"); });
+                
+            // X-axis
+            svg.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x))
+                .selectAll("text")
+                .style("font-size", "10px");
+                
+            // Y-axis
+            svg.append("g")
+                .call(d3.axisLeft(y))
+                .selectAll("text")
+                .style("font-size", "10px");
+                
+            // Labels
+            svg.selectAll(".label")
+                .data(countryData)
+                .enter()
+                .append("text")
+                .attr("class", "label")
+                .attr("x", d => x(d.country) + x.bandwidth() / 2)
+                .attr("y", d => y(d.count) - 5)
+                .attr("text-anchor", "middle")
+                .attr("fill", "#333")
+                .attr("font-size", "10px")
+                .text(d => d.count);
+        }
+        
+        // Product Chart
+        function renderProductChart() {
+            // Clear previous chart if any
+            d3.select("#product-chart").html("");
+            
+            var productData = {{ product_data_json|safe }};
+            
+            // Get dimensions of the container
+            var container = document.querySelector(".product-chart-section .card-content");
+            var containerWidth = container.clientWidth;
+            var containerHeight = container.clientHeight;
+            
+            // If no valid product data, show a message instead of an empty chart
+            if (productData.length === 0 || (productData.length === 1 && productData[0].product === "No Data")) {
+                d3.select("#product-chart").append("p")
+                    .text("No product data available")
+                    .style("color", "#666")
+                    .style("text-align", "center")
+                    .style("font-size", "14px");
+            } else {
+                // Set dimensions
+                var productMargin = { top: 20, right: 30, bottom: 60, left: 50 },
+                    productWidth = containerWidth - productMargin.left - productMargin.right,
+                    productHeight = containerHeight - productMargin.top - productMargin.bottom;
+                    
+                // Create SVG container
+                var productSvg = d3.select("#product-chart")
+                    .append("svg")
+                    .attr("width", containerWidth)
+                    .attr("height", containerHeight)
+                    .append("g")
+                    .attr("transform", "translate(" + productMargin.left + "," + productMargin.top + ")");
+                    
+                // X scale
+                var productX = d3.scaleBand()
+                    .domain(productData.map(d => d.product))
+                    .range([0, productWidth])
+                    .padding(0.2);
+                    
+                // Y scale
+                var productY = d3.scaleLinear()
+                    .domain([0, d3.max(productData, d => d.count)])
+                    .nice()
+                    .range([productHeight, 0]);
+                    
+                // Add bars
+                productSvg.selectAll(".bar-product")
+                    .data(productData)
+                    .enter()
+                    .append("rect")
+                    .attr("class", "bar-product")
+                    .attr("x", d => productX(d.product))
+                    .attr("y", d => productY(d.count))
+                    .attr("width", productX.bandwidth())
+                    .attr("height", d => productHeight - productY(d.count))
+                    .attr("fill", "#4CAF50")
+                    .on("mouseover", function () { d3.select(this).attr("fill", "#388E3C"); })
+                    .on("mouseout", function () { d3.select(this).attr("fill", "#4CAF50"); });
+                    
+                // X-axis with rotated text for readability
+                productSvg.append("g")
+                    .attr("transform", "translate(0," + productHeight + ")")
+                    .call(d3.axisBottom(productX))
+                    .selectAll("text")
+                    .style("text-anchor", "end")
+                    .attr("dx", "-.8em")
+                    .attr("dy", ".15em")
+                    .attr("transform", "rotate(-30)")
+                    .style("font-size", "10px");
+                    
+                // Y-axis
+                productSvg.append("g")
+                    .call(d3.axisLeft(productY))
+                    .selectAll("text")
+                    .style("font-size", "10px");
+                    
+                // Labels
+                productSvg.selectAll(".label-product")
+                    .data(productData)
+                    .enter()
+                    .append("text")
+                    .attr("class", "label-product")
+                    .attr("x", d => productX(d.product) + productX.bandwidth() / 2)
+                    .attr("y", d => productY(d.count) - 5)
+                    .attr("text-anchor", "middle")
+                    .attr("fill", "#333")
+                    .attr("font-size", "10px")
+                    .text(d => d.count);
+            }
+        }
+        
+        // Pest Chart
+        function renderPestChart() {
+            // Clear previous chart if any
+            d3.select("#pest-chart").html("");
+            
+            var pestData = {{ pest_data_json|safe }};
+            
+            // Get dimensions of the container
+            var container = document.querySelector(".pest-chart-section .card-content");
+            var containerWidth = container.clientWidth;
+            var containerHeight = container.clientHeight;
+            
+            if (pestData.length === 0) {
+                d3.select("#pest-chart").append("p")
+                    .text("No pest detection data available")
+                    .style("color", "#666")
+                    .style("text-align", "center")
+                    .style("font-size", "14px");
+            } else {
+                // Set dimensions
+                var pestMargin = { top: 20, right: 30, bottom: 40, left: 60 },
+                    pestWidth = containerWidth - pestMargin.left - pestMargin.right,
+                    pestHeight = containerHeight - pestMargin.top - pestMargin.bottom;
+                    
+                var pestSvg = d3.select("#pest-chart")
+                    .append("svg")
+                    .attr("width", containerWidth)
+                    .attr("height", containerHeight)
+                    .append("g")
+                    .attr("transform", "translate(" + pestMargin.left + "," + pestMargin.top + ")");
+                    
+                var categories = ["Healthy Area", "Diseased Area"];
+                var values = [pestData[0].healthy_area, pestData[0].diseased_area];
+                
+                var pestX = d3.scaleBand()
+                    .domain(categories)
+                    .range([0, pestWidth])
+                    .padding(0.4);
+                    
+                var pestY = d3.scaleLinear()
+                    .domain([0, 100])
+                    .nice()
+                    .range([pestHeight, 0]);
+                    
+                var colorScale = d3.scaleOrdinal()
+                    .domain(categories)
+                    .range(["#4CAF50", "#FF0000"]);  // Green for Healthy, Red for Diseased
+                    
+                pestSvg.selectAll(".bar-pest")
+                    .data(categories)
+                    .enter()
+                    .append("rect")
+                    .attr("class", "bar-pest")
+                    .attr("x", d => pestX(d))
+                    .attr("y", (d, i) => pestY(values[i]))
+                    .attr("width", pestX.bandwidth())
+                    .attr("height", (d, i) => pestHeight - pestY(values[i]))
+                    .attr("fill", d => colorScale(d))
+                    .on("mouseover", function() { d3.select(this).attr("opacity", 0.8); })
+                    .on("mouseout", function(d) { d3.select(this).attr("opacity", 1); });
+                    
+                pestSvg.append("g")
+                    .attr("transform", "translate(0," + pestHeight + ")")
+                    .call(d3.axisBottom(pestX))
+                    .selectAll("text")
+                    .style("font-size", "10px");
+                    
+                pestSvg.append("g")
+                    .call(d3.axisLeft(pestY))
+                    .selectAll("text")
+                    .style("font-size", "10px");
+                    
+                // Labels
+                pestSvg.selectAll(".label-pest")
+                    .data(categories)
+                    .enter()
+                    .append("text")
+                    .attr("class", "label-pest")
+                    .attr("x", d => pestX(d) + pestX.bandwidth() / 2)
+                    .attr("y", (d, i) => pestY(values[i]) - 5)
+                    .attr("text-anchor", "middle")
+                    .attr("fill", "#333")
+                    .attr("font-size", "10px")
+                    .text((d, i) => values[i].toFixed(2) + "%");
+            }
+        }
+
+        // Fill coordinates function
+        function fillCoordinates(lat, lon) {
+            document.getElementById("latitude").value = lat;
+            document.getElementById("longitude").value = lon;
+            document.getElementById("ndvi-form").submit();
+        }
+        
+        // Initialize charts when page loads
+        window.addEventListener('load', function() {
+            resizeCharts();
+        });
+        
+        // Resize charts when window is resized
+        window.addEventListener('resize', function() {
+            resizeCharts();
+        });
+    </script>
+</body>
+</html>
