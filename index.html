@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NDVI Dashboard</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+            color: #252525;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            padding: 16px;
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: auto 1fr 1fr;
+            gap: 16px;
+            height: calc(100vh - 32px);
+            width: 100%;
+        }
+
+        .top-input-section {
+            grid-column: span 12;
+            background: linear-gradient(90deg, #2B5876, #4E4376);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .top-input-section form {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: nowrap;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 0 10px;
+        }
+
+        .top-input-section label {
+            font-size: 14px;
+            color: white;
+            margin-right: 5px;
+            white-space: nowrap;
+        }
+
+        .top-input-section input {
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            outline: none;
+            font-size: 14px;
+            background: transparent;
+            color: white;
+            width: 150px;
+        }
+
+        .top-input-section button {
+            background: #ff9800;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            white-space: nowrap;
+        }
+
+        .top-input-section button:hover {
+            background: #e68900;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 12px 16px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            background: #b0a3bd;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-content {
+            flex: 1;
+            overflow: hidden;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Top Input Section -->
+        <div class="top-input-section">
+            <form method="POST" id="ndvi-form">
+                <div class="input-group">
+                    <label for="start-date">Start Date:</label>
+                    <input type="date" id="start-date" name="start_date">
+                </div>
+                <div class="input-group">
+                    <label for="end-date">End Date:</label>
+                    <input type="date" id="end-date" name="end_date">
+                </div>
+                <div class="input-group">
+                    <label for="latitude">Latitude:</label>
+                    <input type="text" id="latitude" name="latitude" placeholder="Latitude will auto-fill" readonly>
+                </div>
+                <div class="input-group">
+                    <label for="longitude">Longitude:</label>
+                    <input type="text" id="longitude" name="longitude" placeholder="Longitude will auto-fill" readonly>
+                </div>
+                <button type="submit">🌿 CLEAR</button>
+            </form>
+        </div>
+
+        <!-- Map Section -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                🌍 Interactive Map
+            </div>
+            <div class="card-content">
+                {{ map_html|safe }}
+            </div>
+        </div>
+
+        <!-- NDVI Analysis -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                📊 NDVI Analysis
+            </div>
+            <div class="card-content">
+                <img id="ndvi-image" src="" alt="NDVI Image">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get latitude and longitude values from Flask
+        var lat = "{{ lat|default('') }}";
+        var lon = "{{ lon|default('') }}";
+
+        // Only update the NDVI image if lat and lon exist
+        if (lat && lon) {
+            document.getElementById("ndvi-image").src = `/ndvi_image/${lat}/${lon}`;
+        }
+
+        // Function to auto-fill latitude and longitude when selecting a map point
+        function fillCoordinates(lat, lon) {
+            document.getElementById("latitude").value = lat;
+            document.getElementById("longitude").value = lon;
+            document.getElementById("ndvi-form").submit();
+        }
+    </script>
+</body>
+</html>
