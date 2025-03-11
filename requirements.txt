@@ -1,0 +1,11 @@
+Flask
+pandas
+folium
+geemap
+numpy 
+matplotlib
+pillow
+google-auth
+earthengine-api
+opencv-python
+gdown

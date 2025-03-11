@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "proven-space-452610-g1",
+  "private_key_id": "beef75df7b84c111fe0e69589f382f70b9e96801",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCudmHNMN9wJgb5\nhX6kR/FshEUNeTOqDSy4Cl/mzNW1+hHZ89oywRPapy7+uHziokdI3IHZzcsOvTTP\n46UUJH6J2Uv0mkVVEbXTPzhy6zSHlUet7Y5IdF5DVVsECvGgB4qguDUGitNUfF72\nZeZfrOXgcwCmwa16doT134fG4QgKfWc2QpUZ+X/l6yKqVncBM4IeZGzkZesXADjH\noFmipU+ks9aiv5K893fzx0w4Ojeim0jxQgV6Xr3c0mYnWGJbQ+cDP1I+0/uMOl+H\nFHcP9lwDUeoyV94E+Y7aaMLR0LkkuEKeGYAJW6x9mdWVjsz7ORqMVebRbI6br14P\nYTmyteadAgMBAAECggEADKLdoDBDOF5CVxEiN3sc5p08Wyary7KHykGGHLNtYnB2\nzPCEN1tHH6kusDUwmagWinwRZtmPAZKwU1zLq7lqj0iorB8x/y1fNaoryB12tCaB\nBv0takLZ3DEMfJVGVvvBpxs9S/hpW7WYAATCOnlnCDclyIfZE57aybkJ0cMIaan4\n+IsV5/nP7HpsfR9zSLiY8cD6T5riEbxuGTRdZpLzox/CeKkQk/aJkAuRuVLLN4HY\nMzvhmXaHrm1rxKQ2KgidxcqJS0b4UeIW8e2he2CJzSpsalDgq96DmiU439bhZ4I6\ncXWJQUAEGD1f2OoFi5of6L/Ng5HnkJh7IxIZ1P4iyQKBgQDUBv/fhW21kN4qKrrX\nQ8uNxdWOpJlvN9ooDKf74O4FiAJGg++AN5d+xYaz0P5Fn7ZUKcfxJ20JUGgDqNxd\nhfas+yR+1qPHZKZpAlHTezatuLX1xWxIsKxwxoRyF/nO5aOczsKLalqjpIvNEBid\nsWt6X6gyy7mwvi03A5PyF1eUawKBgQDSpPpwYiV/07SJS6SpltdJR3oXJb1WBZXc\n00HfvqI5MfmX8zfl+7RITGoMZKkjLiILIoIUueF8XYtAJbyQMw52HEeo1UQM7t0S\nBcECfQ+mpjGPg06y0lmHUModU4jinEAN09Pt5ClS9PoCZpk8mOJL/rOfFnLdYqEf\nlatRtWLzFwKBgGYQqIO0+0b34bpyr1aIsCgjH9Z2rdW4ETBOR18cu/e1rUK8qEIU\ngLzp4RoWdRCW/XIuWq1fyUE+j5OTaeErZ7+FdeAI+vY1IVZTY4hmO8AMtqsEykeD\npL71ETTLDdnm+Ye2kDgEjnVP9GxWX0Mp8Q8LlTA+mbjXE3T0J/fV/LbZAoGAazUS\nTV52bW+HRBVesf2WhrI9Pkiz63MeSeyvazvv/qIjwSVFfuSzZdSWaMZWmxQguYAP\nqpLMY2qMs9JA/TcvFgfgpNoeL2Lm2wRYrnaOH6gYM02GIVcTv93rcC+SzJrvstnr\n0/i624DZOZ2UQhYhnsH8E2zueyR2ksevEP/7Y3MCgYEAr5n3ikJe8dYAD1mXzUmR\nW/968469SgPGlyVyGOLNvm6g3HNaDNi1QYNG2ZAwonBhDzC9USlgDoswng4JmPFQ\nEGyJMZbTdZ9OT1zv0RW0VNbER8v5kuHDbuNbuNI7tOS2KB6qb0rCnNWkcKb5Q9qd\ngE+WAglMj8by7oMVdj5rduc=\n-----END PRIVATE KEY-----\n",
+  "client_email": "nishika-divyansh@proven-space-452610-g1.iam.gserviceaccount.com",
+  "client_id": "100190631348265474453",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/nishika-divyansh%40proven-space-452610-g1.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
